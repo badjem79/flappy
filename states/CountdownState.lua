@@ -18,6 +18,10 @@ function CountdownState:init()
     self.timer = 0
 end
 
+function CountdownState:enter(params)
+    sounds['timer']:play()
+end
+
 --[[
     Keeps track of how much time has passed and decreases count if the
     timer has exceeded our countdown time. If we have gone down to 0,
@@ -35,6 +39,8 @@ function CountdownState:update(dt)
         -- when 0 is reached, we should enter the PlayState
         if self.count == 0 then
             gStateMachine:change('play')
+        else
+            sounds['timer']:play()
         end
     end
 end

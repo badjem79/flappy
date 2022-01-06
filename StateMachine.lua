@@ -46,13 +46,26 @@ function StateMachine:init(states)
 	}
 	self.states = states or {} -- [name] -> [function that returns states]
 	self.current = self.empty
+	self.previous = self.empty
+	self.state = 'empty'
 end
 
 function StateMachine:change(stateName, enterParams)
 	assert(self.states[stateName]) -- state must exist!
-	self.current:exit()
+	if (enterParams and enterParams.savePrevious) then 
+		self.previous = self.current
+	else
+		self.current:exit()
+	end
+	self.state = stateName
 	self.current = self.states[stateName]()
 	self.current:enter(enterParams)
+end
+
+function StateMachine:resume(stateName)
+	self.state = stateName
+	self.current:exit()
+	self.current = self.previous
 end
 
 function StateMachine:update(dt)
